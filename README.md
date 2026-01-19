@@ -64,4 +64,4 @@ Managers create events → stored in backend
 Students register → QR code generated instantly
 Managers scan QR codes to validate entries at events
 
-<img width="1883" height="913" alt="image" src="https://github.com/user-attachments/assets/5bd71e08-1c1e-4f9f-af53-61b51b64109d" />
+<img width="800" height="500" alt="image" src="https://github.com/user-attachments/assets/5bd71e08-1c1e-4f9f-af53-61b51b64109d" />
