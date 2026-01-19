@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manager Dashboard</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6366f1',
+            secondary: '#22c55e',
+            danger: '#ef4444',
+            darkbg: '#0f172a',
+            cardbg: '#020617'
+          }
+        }
+      }
+    }
+  </script>
+   <!-- 👇 ADD THIS EXACTLY HERE -->
+  <style>
+  input, textarea, select {
+    background: rgba(15, 23, 42, 0.55) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,0.06),
+      0 8px 30px rgba(0,0,0,0.3);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: rgba(255, 255, 255, 0.65) !important;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: none !important;
+    border-color: rgba(139, 92, 246, 0.8) !important;
+    box-shadow:
+      0 0 0 2px rgba(139, 92, 246, 0.35),
+      0 10px 35px rgba(0,0,0,0.4);
+  }
+</style>
+
+  <!-- 👆 END -->
+</head>
+
+<body
+  class="min-h-screen text-white p-6 font-sans bg-cover bg-center bg-no-repeat"
+  style="background-image: url('assets/bg-manager.jpg');"
+>
+
+  <!-- Profile -->
+  <div class="absolute top-6 right-6">
+    <div id="profileIcon"
+      class="w-11 h-11 rounded-full bg-primary flex items-center justify-center cursor-pointer text-lg">
+      👤
+    </div>
+
+    <div id="profileDropdown"
+      class="hidden absolute right-0 mt-3 w-44 bg-cardbg rounded-xl shadow-lg border border-slate-800">
+      <button id="viewEventsBtn"
+        class="w-full px-4 py-3 text-left hover:bg-slate-800 transition">
+        View My Events
+      </button>
+      <button id="logoutBtn"
+        class="w-full px-4 py-3 text-left text-danger hover:bg-slate-800 transition">
+        Logout
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="max-w-xl mx-auto mt-20
+            bg-white/20 backdrop-blur-md
+            border border-white/25
+            rounded-2xl p-8
+            shadow-2xl">
+
+
+
+    <!-- CREATE EVENT -->
+    <section id="createEventSection">
+      <h2 class="text-2xl font-bold text-center">Manager Dashboard</h2>
+      <p class="text-center text-slate-400 text-sm mt-1 mb-6">
+        Create and manage your events
+      </p>
+
+      <form id="createEventForm" class="space-y-4">
+        <input id="eventName" type="text" placeholder="Event Name" required
+          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700"/>
+
+        <textarea id="eventDescription" placeholder="Description" required
+          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 resize-none h-24"></textarea>
+
+        <input id="eventVenue" type="text" placeholder="Venue" required
+          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700"/>
+
+        <input id="eventDate" type="date" required
+          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700"/>
+
+        <div class="flex gap-3">
+          <input id="eventTime" type="text" placeholder="hh:mm" required
+            class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700"/>
+          <select id="eventPeriod"
+            class="px-4 py-3 rounded-xl bg-slate-900 border border-slate-700">
+            <option>AM</option>
+            <option>PM</option>
+          </select>
+        </div>
+
+        <input id="eventCapacity" type="number" placeholder="Capacity" required
+          class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-700"/>
+
+        <button type="submit"
+          class="w-full py-3 rounded-xl bg-primary font-semibold">
+          Create Event
+        </button>
+      </form>
+
+      <button onclick="window.location.href='qr_scanner.html'"
+        class="w-full mt-4 py-3 rounded-xl border border-slate-700 hover:bg-slate-800">
+        📷 Scan QR
+      </button>
+    </section>
+
+    
+
+    <!-- MY EVENTS -->
+    <section id="myEventsSection" class="hidden mt-2">
+      <h2 class="text-xl font-bold mb-4">My Events</h2>
+
+      <div id="eventsContainer" class="space-y-4">
+        <!-- JS injects event cards here -->
+      </div>
+
+      <button id="backBtn"
+        class="w-full mt-6 py-3 rounded-xl border border-slate-700 hover:bg-slate-800">
+        ← Back
+      </button>
+    </section>
+
+  </div>
+
+  <script src="js/manager.js"></script>
+</body>
+</html>

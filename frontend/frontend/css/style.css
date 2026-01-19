@@ -1,0 +1,212 @@
+/* =====================
+   Global Theme
+===================== */
+:root {
+  --bg-dark: #020617;
+  --bg-card: rgba(17, 24, 39, 0.75); /* glass */
+  --primary: #8b5cf6;
+  --primary-hover: #7c3aed;
+  --text-light: #e5e7eb;
+  --text-muted: #9ca3af;
+
+  --radius-md: 14px;
+}
+
+/* =====================
+   Reset
+===================== */
+* {
+  box-sizing: border-box;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+/* =====================
+   Full-screen Background
+===================== */
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text-light);
+
+  background:
+    linear-gradient(
+      rgba(2, 6, 23, 0.85),
+      rgba(2, 6, 23, 0.85)
+    ),
+    url("../assets/bg-campus.jpg");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* =====================
+   Containers (Glass Card)
+===================== */
+.container {
+  background: var(--bg-card);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  padding: 30px 25px;
+  border-radius: var(--radius-md);
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* =====================
+   Inputs & Select
+===================== */
+input,
+select {
+  width: 90%;
+  display: block;
+  margin: 12px auto;
+  padding: 13px;
+
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+select {
+  cursor: pointer;
+}
+
+/* =====================
+   Buttons
+===================== */
+button {
+  width: 90%;
+  margin: 20px auto 0;
+  padding: 13px;
+
+  border-radius: var(--radius-md);
+  border: none;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  background: linear-gradient(135deg, #8b5cf6, #6366f1);
+  color: white;
+  cursor: pointer;
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+}
+
+/* =====================
+   Text
+===================== */
+h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+p {
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* =====================================================
+   🔥 EVENTS PAGE LAYOUT FIX (ADDED — NOTHING REMOVED)
+===================================================== */
+
+/* Events main wrapper */
+.events-container {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 20px;
+
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 32px;
+}
+
+/* Individual event card */
+.event-card,
+.event {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  border-radius: 18px;
+  overflow: hidden;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 20px 45px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.event-card:hover,
+.event:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7);
+}
+
+/* Event image */
+.event-card img,
+.event img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Event content */
+.event-content,
+.event-details {
+  padding: 18px 20px;
+}
+
+/* Event title */
+.event-card h3,
+.event h3,
+.event-card h4,
+.event h4 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+/* Event description */
+.event-card p,
+.event p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 6px 0;
+}
+
+/* Meta info (date, location, seats) */
+.event-meta {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #cbd5f5;
+}
+
+/* Register button inside card */
+.event-card button,
+.event button {
+  width: 100%;
+  margin-top: 16px;
+}
+
+

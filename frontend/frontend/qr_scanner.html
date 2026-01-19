@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Scanner - Event Manager</title>
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      margin: 40px;
+    }
+    #reader {
+      width: 400px;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <h2>Scan Student QR Code</h2>
+  <div id="reader"></div>
+  <p id="result"></p>
+
+  <script>
+  async function verifyQR(decodedText) {
+    const response = await fetch("http://127.0.0.1:5000/api/verify_qr", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ qr_text: decodedText }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      document.getElementById("result").innerText = 
+        `✅ Verified Student: ${data.student}\nEvent: ${data.event}`;
+    } else {
+      document.getElementById("result").innerText = 
+        `❌ ${data.error || "Invalid QR code"}`;
+    }
+  }
+
+  function onScanSuccess(decodedText) {
+    verifyQR(decodedText);
+  }
+
+  function onScanError(errorMessage) {
+    console.warn(errorMessage);
+  }
+
+  const html5QrCode = new Html5Qrcode("reader");
+  html5QrCode.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    onScanSuccess,
+    onScanError
+  );
+</script>
+
+</body>
+</html>
+
+
+
+
+
+

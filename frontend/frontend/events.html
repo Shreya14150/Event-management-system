@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Available Events</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Your existing CSS (kept) -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <style>
+    #registerModal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.7);
+    }
+  </style>
+</head>
+
+<body
+  class="text-white min-h-screen bg-cover bg-center bg-no-repeat"
+  style="background-image: url('assets/bg-events.jpg');"
+>
+
+
+<!-- HERO -->
+<section class="text-center py-14">
+  <h1 class="text-5xl font-extrabold tracking-tight">
+    🎶 Campus <span class="text-purple-400">Events</span>
+  </h1>
+  <p class="mt-4 text-gray-400 max-w-xl mx-auto">
+    Discover live performances, workshops, and unforgettable college moments.
+  </p>
+
+  <div class="mt-8 flex justify-center">
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search events..."
+      class="px-5 py-3 w-80 rounded-full bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+    />
+  </div>
+</section>
+
+<!-- EVENTS GRID -->
+<div
+  id="eventsContainer"
+  class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 pb-16"
+></div>
+
+<!-- REGISTER MODAL -->
+<div id="registerModal">
+  <div class="bg-gray-900 p-6 rounded-xl shadow-xl w-96">
+    <h3 class="text-xl font-bold mb-4">Register for Event</h3>
+
+    <form id="registerForm" class="space-y-3">
+      <input type="hidden" id="eventIdInput" />
+      <input type="text" id="nameInput" placeholder="Your Name" required
+        class="w-full px-3 py-2 rounded bg-gray-800 border border-gray-700" />
+      <input type="email" id="emailInput" placeholder="Your Email" required
+        class="w-full px-3 py-2 rounded bg-gray-800 border border-gray-700" />
+
+      <button type="submit" id="modalRegisterBtn"
+        class="w-full py-2 bg-purple-600 rounded hover:bg-purple-700 transition">
+        Register
+      </button>
+    </form>
+
+    <img id="qrImage" class="hidden w-48 mx-auto mt-4" />
+
+    <a id="downloadQR" class="hidden mt-3 block text-center" download="event_qr.png">
+      <button class="px-4 py-2 bg-green-600 rounded hover:bg-green-700">
+        Download QR
+      </button>
+    </a>
+
+    <button onclick="closeModal()" class="mt-4 w-full py-2 bg-gray-700 rounded">
+      Close
+    </button>
+  </div>
+</div>
+
+<script>
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const eventsContainer = document.getElementById("eventsContainer");
+  const registerModal = document.getElementById("registerModal");
+  const registerForm = document.getElementById("registerForm");
+  const qrImage = document.getElementById("qrImage");
+  const downloadQR = document.getElementById("downloadQR");
+  const modalRegisterBtn = document.getElementById("modalRegisterBtn");
+  const searchInput = document.getElementById("searchInput");
+
+  function formatTimeTo12Hour(time24) {
+    let [h, m] = time24.split(":").map(Number);
+    const p = h >= 12 ? "PM" : "AM";
+    h = h % 12 || 12;
+    return `${h}:${m.toString().padStart(2, "0")} ${p}`;
+  }
+
+  function isEventStarted(event) {
+    const eventDate = new Date(event.date);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    return today >= eventDate;
+  }
+
+  async function fetchEvents() {
+    const res = await fetch("http://127.0.0.1:5000/api/events");
+    const events = await res.json();
+    renderEvents(events);
+  }
+
+  function renderEvents(events) {
+    eventsContainer.innerHTML = "";
+
+    events.forEach(event => {
+      const alreadyRegistered = event.registeredUsers?.some(
+        u => u.user_id === currentUser?.id
+      );
+
+      const seatsLeft = event.seats_left;
+      const isPaused = event.isPaused === true;
+      const started = isEventStarted(event);
+
+      let actions = "";
+
+      if (alreadyRegistered) {
+        actions = `<div class="text-green-400 font-semibold">Registered</div>`;
+        if (!started) {
+          actions += `
+            <button
+              onclick="cancelRegistration('${event.id}')"
+              class="mt-2 w-full py-2 bg-red-600 rounded hover:bg-red-700">
+              Cancel Registration
+            </button>`;
+        }
+      } else if (isPaused) {
+        actions = `<div class="text-yellow-400">Registration Paused</div>`;
+      } else if (seatsLeft <= 0) {
+        actions = `<div class="text-gray-400">No Seats Available</div>`;
+      } else {
+        actions = `
+          <button
+            onclick="openModal('${event.id}')"
+            class="w-full py-2 bg-purple-600 rounded hover:bg-purple-700 transition">
+            Register
+          </button>`;
+      }
+
+      const card = document.createElement("div");
+      card.className =
+        "bg-gray-900 rounded-2xl overflow-hidden shadow-lg hover:scale-[1.02] transition";
+
+      card.innerHTML = `
+        <img
+          src="https://images.unsplash.com/photo-1518972559570-7cc1309f3229"
+          class="h-40 w-full object-cover"
+        />
+
+        <div class="p-5 space-y-2">
+          <h3 class="text-xl font-bold">${event.name}</h3>
+          <p class="text-gray-400 text-sm">${event.description}</p>
+
+          <p class="text-sm">
+            📅 ${event.date} | ⏰ ${formatTimeTo12Hour(event.time)}
+          </p>
+
+          <p class="text-sm">📍 ${event.venue}</p>
+          <p class="text-sm">🪑 Seats Left: ${seatsLeft}</p>
+
+          <div class="pt-3">
+            ${actions}
+          </div>
+        </div>
+      `;
+
+      eventsContainer.appendChild(card);
+    });
+  }
+
+  function openModal(eventId) {
+    document.getElementById("eventIdInput").value = eventId;
+    registerModal.style.display = "flex";
+    registerForm.reset();
+    qrImage.classList.add("hidden");
+    downloadQR.classList.add("hidden");
+    modalRegisterBtn.style.display = "block";
+  }
+
+  function closeModal() {
+    registerModal.style.display = "none";
+  }
+
+  registerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      user_id: currentUser.id,
+      event_id: document.getElementById("eventIdInput").value,
+      name: document.getElementById("nameInput").value,
+      email: document.getElementById("emailInput").value
+    };
+
+    const res = await fetch("http://127.0.0.1:5000/api/register_event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      qrImage.src = data.qr_data_uri;
+      qrImage.classList.remove("hidden");
+      downloadQR.href = data.qr_data_uri;
+      downloadQR.classList.remove("hidden");
+      modalRegisterBtn.style.display = "none";
+      fetchEvents();
+    } else {
+      alert(data.error || "Registration failed");
+    }
+  });
+
+  async function cancelRegistration(eventId) {
+    if (!confirm("Cancel your registration?")) return;
+
+    const res = await fetch("http://127.0.0.1:5000/api/cancel_registration", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: currentUser.id,
+        event_id: eventId
+      })
+    });
+
+    if (res.ok) fetchEvents();
+  }
+
+  searchInput.addEventListener("input", fetchEvents);
+  fetchEvents();
+</script>
+
+</body>
+</html>
